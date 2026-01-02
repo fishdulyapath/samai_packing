@@ -84,10 +84,10 @@ const formatTime = (timeStr) => {
 </script>
 
 <template>
-    <Dialog :visible="visible" @update:visible="closeDialog" modal header="พิมพ์ใบรับ" :style="{ width: '450px' }" :dismissableMask="true">
+    <Dialog :visible="visible" @update:visible="closeDialog" modal header="พิมพ์ใบจัด" :style="{ width: '450px' }" :dismissableMask="true">
         <div class="print-confirm-content">
             <div class="flex flex-col items-center gap-3 py-4">
-                <h3 class="text-xl font-semibold">พร้อมพิมพ์ใบรับหรือไม่?</h3>
+                <h3 class="text-xl font-semibold">พร้อมพิมพ์ใบจัดหรือไม่?</h3>
                 <div class="text-center text-muted-color">
                     <p class="mb-2">
                         เลขที่: <span class="font-semibold text-primary">{{ documentData.doc_no || '-' }}</span>
@@ -99,18 +99,18 @@ const formatTime = (timeStr) => {
                         จำนวนสินค้า: <span class="font-semibold text-primary">{{ totalQty }} ชิ้น</span>
                     </p>
                 </div>
-                <p class="text-sm text-muted-color mt-2">คุณสามารถปรับขนาดกระดาษได้ในหน้าต่างพิมพ์</p>
+                <p class="text-sm text-muted-color mt-2">คุณสามารถปจัดขนาดกระดาษได้ในหน้าต่างพิมพ์</p>
             </div>
 
             <!-- เนื้อหาที่จะพิมพ์ (ซ่อนใน dialog) -->
             <div id="print" class="print-area no-print" style="display: none">
                 <div class="slip-header">
-                    <h1 class="slip-title">ใบรับสินค้า</h1>
+                    <h1 class="slip-title">ใบจัดสินค้า</h1>
                     <div class="slip-divider"></div>
                     <div class="slip-info">
                         <div class="info-line">วันที่: {{ formatDate(documentData.doc_date || documentData.close_date) }} {{ formatTime(documentData.doc_time || documentData.close_time) }}</div>
                         <div class="info-line">เลขที่บิล: {{ documentData.doc_no || '-' }}</div>
-                        <div class="info-line">เลขที่ PO: {{ documentData.doc_ref || '-' }}</div>
+                        <div class="info-line">เลขที่ SO: {{ documentData.doc_ref || '-' }}</div>
                         <div class="info-line">ลูกค้า: {{ documentData.cust_name || '-' }}</div>
                         <div class="info-line">พนักงาน: {{ documentData.user_close_name || documentData.sale_name || '-' }}</div>
                     </div>

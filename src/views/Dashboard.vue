@@ -1,7 +1,7 @@
 <script setup>
-import { ref, onMounted } from 'vue';
-import { useToast } from 'primevue/usetoast';
 import ReceiveDocService from '@/service/ReceiveDocService';
+import { useToast } from 'primevue/usetoast';
+import { onMounted, ref } from 'vue';
 
 const toast = useToast();
 const loading = ref(false);
@@ -13,8 +13,8 @@ const toDate = ref(now);
 
 // Stats
 const stats = ref({
-    pending: 0, // SO ค้างรับ (status=0 + receive_qty < so_qty)
-    received: 0, // รับแล้ว (status=0 + receive_qty === so_qty)
+    pending: 0, // SO ค้างจัด (status=0 + receive_qty < so_qty)
+    received: 0, // จัดแล้ว (status=0 + receive_qty === so_qty)
     waiting: 0, // รออนุมัติ (status=1)
     completed: 0 // ตรวจแล้ว (status=2)
 });
@@ -45,7 +45,7 @@ async function loadDashboardStats() {
             ReceiveDocService.getReceiveDocListByStatus('', fromDateStr, toDateStr, 2, 1, 1)
         ]);
 
-        // Status 0: แยก SO ค้างรับ และ รับแล้ว
+        // Status 0: แยก SO ค้างจัด และ จัดแล้ว
         if (status0Result.success) {
             const status0Data = status0Result.data || [];
             stats.value.pending = status0Data.filter((doc) => {
@@ -91,7 +91,7 @@ async function handleSearch() {
     <div class="flex flex-col gap-6">
         <div class="card">
             <div class="font-semibold text-xl mb-2">Dashboard</div>
-            <p class="text-muted-color m-0 mb-6">ภาพรวมสถิติการรับสินค้า</p>
+            <p class="text-muted-color m-0 mb-6">ภาพรวมสถิติการจัดสินค้า</p>
 
             <!-- Filters -->
             <div class="mb-6">
@@ -106,7 +106,7 @@ async function handleSearch() {
 
             <!-- Stats Cards -->
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                <!-- PO ค้างรับ -->
+                <!-- SO ค้างจัด -->
                 <div class="bg-orange-50 dark:bg-orange-900/20 border-2 border-orange-200 dark:border-orange-800 rounded-xl p-6 hover:shadow-lg transition-shadow">
                     <div class="flex items-start justify-between mb-4">
                         <div class="bg-orange-500 text-white rounded-xl p-3">
@@ -114,11 +114,11 @@ async function handleSearch() {
                         </div>
                         <Tag :value="stats.pending.toString()" severity="warning" class="text-xl font-bold px-4 py-2" />
                     </div>
-                    <div class="text-orange-900 dark:text-orange-100 font-semibold text-lg mb-1">PO ค้างรับ</div>
-                    <div class="text-orange-600 dark:text-orange-400 text-sm">ยังรับไม่ครบตามใบสั่ง</div>
+                    <div class="text-orange-900 dark:text-orange-100 font-semibold text-lg mb-1">SO ค้างจัด</div>
+                    <div class="text-orange-600 dark:text-orange-400 text-sm">ยังจัดไม่ครบตามใบสั่ง</div>
                 </div>
 
-                <!-- รับแล้ว -->
+                <!-- จัดแล้ว -->
                 <div class="bg-blue-50 dark:bg-blue-900/20 border-2 border-blue-200 dark:border-blue-800 rounded-xl p-6 hover:shadow-lg transition-shadow">
                     <div class="flex items-start justify-between mb-4">
                         <div class="bg-blue-500 text-white rounded-xl p-3">
@@ -126,8 +126,8 @@ async function handleSearch() {
                         </div>
                         <Tag :value="stats.received.toString()" severity="info" class="text-xl font-bold px-4 py-2" />
                     </div>
-                    <div class="text-blue-900 dark:text-blue-100 font-semibold text-lg mb-1">รับแล้ว</div>
-                    <div class="text-blue-600 dark:text-blue-400 text-sm">รับครบแล้ว พร้อมส่งอนุมัติ</div>
+                    <div class="text-blue-900 dark:text-blue-100 font-semibold text-lg mb-1">จัดแล้ว</div>
+                    <div class="text-blue-600 dark:text-blue-400 text-sm">จัดครบแล้ว พร้อมส่งอนุมัติ</div>
                 </div>
 
                 <!-- รออนุมัติ -->

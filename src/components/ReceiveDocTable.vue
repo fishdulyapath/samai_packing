@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from 'vue';
+import { computed, ref } from 'vue';
 
 const emit = defineEmits(['page-change', 'receive-item', 'send-approve', 'delete', 'close-job', 'view-detail', 'row-click', 'print', 'view-images']);
 
@@ -123,11 +123,11 @@ const totalPages = computed(() => Math.ceil(props.totalRecords / props.pageSize)
                         <span v-else class="text-muted-color">-</span>
                     </div>
                     <div class="flex items-center justify-between text-sm">
-                        <span class="text-muted-color">จำนวนที่ต้องรับ:</span>
+                        <span class="text-muted-color">จำนวนที่ต้องจัด:</span>
                         <Tag :value="formatNumber(doc.so_qty)" severity="info" class="font-bold" />
                     </div>
                     <div class="flex items-center justify-between text-sm">
-                        <span class="text-muted-color">จำนวนรับ:</span>
+                        <span class="text-muted-color">จำนวนจัด:</span>
                         <Tag :value="doc.receive_qty?.toString() || '0'" :severity="canApprove(doc) ? 'success' : 'warn'" class="font-bold" />
                     </div>
                 </div>
@@ -135,7 +135,7 @@ const totalPages = computed(() => Math.ceil(props.totalRecords / props.pageSize)
                 <!-- Mobile Actions -->
                 <div v-if="mode === 'default'" class="flex flex-col gap-2 pt-3 border-t" @click.stop>
                     <Button icon="pi pi-eye" label="ดูรายละเอียด" size="small" severity="info" @click="emit('view-detail', doc)" fluid />
-                    <Button icon="pi pi-box" label="รับสินค้า" size="small" severity="success" @click="emit('receive-item', doc)" fluid />
+                    <Button icon="pi pi-box" label="จัดสินค้า" size="small" severity="success" @click="emit('receive-item', doc)" fluid />
                     <div class="grid grid-cols-2 gap-2">
                         <Button icon="pi pi-send" label="ส่งอนุมัติ" size="small" severity="info" :disabled="!canApprove(doc)" @click="emit('send-approve', doc)" />
                         <Button icon="pi pi-trash" label="ลบ" size="small" severity="danger" @click="emit('delete', doc)" />
@@ -225,23 +225,23 @@ const totalPages = computed(() => Math.ceil(props.totalRecords / props.pageSize)
             </template>
         </Column>
 
-        <!-- 2. เลขที่ใบรับ -->
-        <Column field="doc_no" header="เลขที่ใบรับ" :sortable="true" style="min-width: 14rem">
+        <!-- 2. เลขที่ใบจัด -->
+        <Column field="doc_no" header="เลขที่ใบจัด" :sortable="true" style="min-width: 14rem">
             <template #body="{ data }">
                 <span class="font-semibold text-primary">{{ data.doc_no }}</span>
             </template>
         </Column>
 
-        <!-- 3. เลขที่ PO -->
-        <Column field="doc_ref" header="เลขที่ PO" :sortable="true" style="min-width: 12rem">
+        <!-- 3. เลขที่ SO -->
+        <Column field="doc_ref" header="เลขที่ SO" :sortable="true" style="min-width: 12rem">
             <template #body="{ data }">
                 <Tag v-if="data.doc_ref" :value="data.doc_ref" severity="info" />
                 <span v-else class="text-muted-color">-</span>
             </template>
         </Column>
 
-        <!-- 4. จำนวนที่ต้องรับ (SO Qty) -->
-        <Column field="so_qty" header="จำนวนที่ต้องรับ" :sortable="true" style="min-width: 10rem">
+        <!-- 4. จำนวนที่ต้องจัด (SO Qty) -->
+        <Column field="so_qty" header="จำนวนที่ต้องจัด" :sortable="true" style="min-width: 10rem">
             <template #body="{ data }">
                 <div class="flex items-center gap-2">
                     <i class="pi pi-box text-blue-500"></i>
@@ -250,8 +250,8 @@ const totalPages = computed(() => Math.ceil(props.totalRecords / props.pageSize)
             </template>
         </Column>
 
-        <!-- 5. จำนวนรับ (Receive Qty) - เน้นให้เด่น -->
-        <Column field="receive_qty" header="จำนวนรับ" :sortable="true" style="min-width: 10rem">
+        <!-- 5. จำนวนจัด (Receive Qty) - เน้นให้เด่น -->
+        <Column field="receive_qty" header="จำนวนจัด" :sortable="true" style="min-width: 10rem">
             <template #body="{ data }">
                 <div class="flex items-center gap-2">
                     <i class="pi pi-check-circle text-green-500"></i>
@@ -261,12 +261,12 @@ const totalPages = computed(() => Math.ceil(props.totalRecords / props.pageSize)
         </Column>
 
         <!-- 6. เมนูจัดการ -->
-        <!-- Default Mode: ใบรับสินค้า -->
+        <!-- Default Mode: ใบจัดสินค้า -->
         <Column v-if="mode === 'default'" header="จัดการ" :exportable="false" style="min-width: 28rem">
             <template #body="slotProps">
                 <div class="flex flex-wrap gap-2" @click.stop>
                     <Button icon="pi pi-eye" label="ดูรายละเอียด" size="small" severity="info" @click="emit('view-detail', slotProps.data)" v-tooltip.top="'ดูรายละเอียด'" />
-                    <Button icon="pi pi-box" label="รับสินค้า" size="small" severity="success" @click="emit('receive-item', slotProps.data)" v-tooltip.top="'เริ่มรับสินค้า'" />
+                    <Button icon="pi pi-box" label="จัดสินค้า" size="small" severity="success" @click="emit('receive-item', slotProps.data)" v-tooltip.top="'เริ่มจัดสินค้า'" />
                     <Button
                         icon="pi pi-send"
                         label="ส่งอนุมัติ"
@@ -274,15 +274,15 @@ const totalPages = computed(() => Math.ceil(props.totalRecords / props.pageSize)
                         severity="info"
                         :disabled="!canApprove(slotProps.data)"
                         @click="emit('send-approve', slotProps.data)"
-                        v-tooltip.top="canApprove(slotProps.data) ? 'ส่งอนุมัติ' : 'รอรับสินค้าให้ครบก่อน'"
+                        v-tooltip.top="canApprove(slotProps.data) ? 'ส่งอนุมัติ' : 'รอจัดสินค้าให้ครบก่อน'"
                     />
-                    <Button icon="pi pi-trash" label="ลบ" size="small" severity="danger" @click="emit('delete', slotProps.data)" v-tooltip.top="'ลบใบรับ'" />
-                    <Button v-if="canPrint(slotProps.data)" icon="pi pi-print" label="พิมพ์" size="small" severity="secondary" outlined @click="emit('print', slotProps.data)" v-tooltip.top="'พิมพ์ใบรับ'" />
+                    <Button icon="pi pi-trash" label="ลบ" size="small" severity="danger" @click="emit('delete', slotProps.data)" v-tooltip.top="'ลบใบจัด'" />
+                    <Button v-if="canPrint(slotProps.data)" icon="pi pi-print" label="พิมพ์" size="small" severity="secondary" outlined @click="emit('print', slotProps.data)" v-tooltip.top="'พิมพ์ใบจัด'" />
                 </div>
             </template>
         </Column>
 
-        <!-- Close Mode: ปิดงานใบรับ -->
+        <!-- Close Mode: ปิดงานใบจัด -->
         <Column v-if="mode === 'close'" header="จัดการ" :exportable="false" style="min-width: 24rem">
             <template #body="slotProps">
                 <div class="flex flex-wrap gap-2" @click.stop>
@@ -299,12 +299,12 @@ const totalPages = computed(() => Math.ceil(props.totalRecords / props.pageSize)
                         :badge="slotProps.data.image_count > 0 ? String(slotProps.data.image_count) : null"
                         badgeClass="p-badge-success"
                     />
-                    <Button v-if="canPrint(slotProps.data)" icon="pi pi-print" label="พิมพ์" size="small" severity="secondary" outlined @click="emit('print', slotProps.data)" v-tooltip.top="'พิมพ์ใบรับ'" />
+                    <Button v-if="canPrint(slotProps.data)" icon="pi pi-print" label="พิมพ์" size="small" severity="secondary" outlined @click="emit('print', slotProps.data)" v-tooltip.top="'พิมพ์ใบจัด'" />
                 </div>
             </template>
         </Column>
 
-        <!-- History Mode: ประวัติใบรับ -->
+        <!-- History Mode: ประวัติใบจัด -->
         <Column v-if="mode === 'history'" header="สถานะ" style="min-width: 8rem">
             <template #body>
                 <Tag value="ปิดงานแล้ว" severity="secondary" />
@@ -327,7 +327,7 @@ const totalPages = computed(() => Math.ceil(props.totalRecords / props.pageSize)
                         :badge="slotProps.data.image_count > 0 ? String(slotProps.data.image_count) : null"
                         badgeClass="p-badge-success"
                     />
-                    <Button v-if="canPrint(slotProps.data)" icon="pi pi-print" label="พิมพ์" size="small" severity="secondary" outlined @click="emit('print', slotProps.data)" v-tooltip.top="'พิมพ์ใบรับ'" />
+                    <Button v-if="canPrint(slotProps.data)" icon="pi pi-print" label="พิมพ์" size="small" severity="secondary" outlined @click="emit('print', slotProps.data)" v-tooltip.top="'พิมพ์ใบจัด'" />
                 </div>
             </template>
         </Column>

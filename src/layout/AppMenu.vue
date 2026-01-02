@@ -1,6 +1,6 @@
 <script setup>
-import { ref, computed, onMounted } from 'vue';
 import AuthService from '@/service/AuthService';
+import { computed, onMounted, ref } from 'vue';
 import AppMenuItem from './AppMenuItem.vue';
 
 const isSuperAdmin = ref(false);
@@ -30,16 +30,16 @@ const model = computed(() => {
     if (permissions.value) {
         const mainMenuItems = [];
 
-        // เมนูรับสินค้า
+        // เมนูจัดสินค้า
         if (permissions.value.receive_screen === '1') {
             mainMenuItems.push(
                 {
-                    label: 'รับสินค้าจาก PO',
+                    label: 'จัดสินค้าจาก SO',
                     icon: 'pi pi-fw pi-file-check',
                     to: '/pages/receivedoc'
                 },
                 {
-                    label: 'รายการรับสินค้า',
+                    label: 'รายการจัดสินค้า',
                     icon: 'pi pi-fw pi-check-circle',
                     to: '/pages/closejobreceive'
                 }

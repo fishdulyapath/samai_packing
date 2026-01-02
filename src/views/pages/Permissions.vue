@@ -158,7 +158,7 @@ async function handleSearch() {
 
                 <Column field="name_1" header="ชื่อผู้ใช้" :sortable="true" style="min-width: 12rem"></Column>
 
-                <Column field="receive_screen" header="หน้ารับเอกสาร" :sortable="true" style="min-width: 10rem">
+                <Column field="receive_screen" header="หน้าจัดเอกสาร" :sortable="true" style="min-width: 10rem">
                     <template #body="{ data }">
                         <Tag :value="getPermissionLabel(data.receive_screen)" :severity="getPermissionSeverity(data.receive_screen)" />
                     </template>
@@ -198,7 +198,7 @@ async function handleSearch() {
                 </div>
 
                 <div class="flex flex-col gap-3">
-                    <label class="font-bold">หน้ารับเอกสาร</label>
+                    <label class="font-bold">หน้าจัดเอกสาร</label>
                     <div class="flex gap-6">
                         <div class="flex items-center">
                             <RadioButton v-model="user.receive_screen" inputId="receive1" value="1" name="receive" />

@@ -40,18 +40,18 @@ function handleClose() {
     emit('close');
 }
 
-// รวมข้อมูล PO และรายการที่รับแล้ว
+// รวมข้อมูล SO และรายการที่จัดแล้ว
 const combinedDetails = computed(() => {
     const combined = {};
 
-    // เพิ่มข้อมูลจาก PO
+    // เพิ่มข้อมูลจาก SO
     props.soDetails.forEach((item) => {
         if (!combined[item.item_code]) {
             combined[item.item_code] = {
                 item_code: item.item_code,
                 item_name: item.item_name,
                 unit_code: item.unit_code,
-                item_year: item.item_year || '', // เพิ่ม item_year จาก PO
+                item_year: item.item_year || '', // เพิ่ม item_year จาก SO
                 so_qty: parseInt(item.qty) || 0,
                 received_qty: 0,
                 details: [] // เก็บรายละเอียดแต่ละ barcode/ปี
@@ -59,7 +59,7 @@ const combinedDetails = computed(() => {
         }
     });
 
-    // เพิ่มข้อมูลจากรายการที่รับแล้ว
+    // เพิ่มข้อมูลจากรายการที่จัดแล้ว
     props.receiveDetails.forEach((item) => {
         if (!combined[item.item_code]) {
             combined[item.item_code] = {
@@ -84,7 +84,7 @@ const combinedDetails = computed(() => {
 </script>
 
 <template>
-    <Dialog :visible="visible" @update:visible="(val) => emit('update:visible', val)" :style="{ width: '90vw', height: '85vh' }" header="รายละเอียดการรับสินค้า" :modal="true" :draggable="false" :breakpoints="{ '960px': '95vw', '640px': '98vw' }">
+    <Dialog :visible="visible" @update:visible="(val) => emit('update:visible', val)" :style="{ width: '90vw', height: '85vh' }" header="รายละเอียดการจัดสินค้า" :modal="true" :draggable="false" :breakpoints="{ '960px': '95vw', '640px': '98vw' }">
         <div v-if="loading" class="flex items-center justify-center py-12">
             <i class="pi pi-spin pi-spinner text-4xl mr-3"></i>
             <span class="text-xl">กำลังโหลดข้อมูล...</span>
@@ -103,7 +103,7 @@ const combinedDetails = computed(() => {
                         <p class="font-semibold">{{ formatDate(document?.doc_date) }}</p>
                     </div>
                     <div>
-                        <label class="text-sm text-muted-color">อ้างอิง Po</label>
+                        <label class="text-sm text-muted-color">อ้างอิง SO</label>
                         <p class="font-semibold">{{ document?.doc_ref || '-' }}</p>
                     </div>
                     <div>
@@ -157,7 +157,7 @@ const combinedDetails = computed(() => {
                                     </div>
                                     <i class="pi pi-arrow-right text-muted-color text-lg"></i>
                                     <div class="text-center">
-                                        <div class="text-sm" :class="item.received_qty >= item.so_qty ? 'text-green-600 dark:text-green-400' : 'text-orange-600 dark:text-orange-400'">รับแล้ว</div>
+                                        <div class="text-sm" :class="item.received_qty >= item.so_qty ? 'text-green-600 dark:text-green-400' : 'text-orange-600 dark:text-orange-400'">จัดแล้ว</div>
                                         <div class="text-2xl font-bold" :class="item.received_qty >= item.so_qty ? 'text-green-600 dark:text-green-400' : 'text-orange-600 dark:text-orange-400'">{{ item.received_qty }}</div>
                                     </div>
                                     <i class="pi pi-arrow-right text-muted-color text-lg"></i>
@@ -205,11 +205,11 @@ const combinedDetails = computed(() => {
 
                             <div class="grid grid-cols-3 gap-3 mb-3 pb-3 border-b border-surface-200 dark:border-surface-700">
                                 <div class="bg-blue-50 dark:bg-blue-900/20 rounded p-3 text-center">
-                                    <div class="text-sm text-blue-600 dark:text-blue-400 mb-1">จำนวน PO</div>
+                                    <div class="text-sm text-blue-600 dark:text-blue-400 mb-1">จำนวน SO</div>
                                     <div class="text-xl font-bold text-blue-600 dark:text-blue-400">{{ item.so_qty }}</div>
                                 </div>
                                 <div :class="['rounded p-3 text-center', item.received_qty >= item.so_qty ? 'bg-green-50 dark:bg-green-900/20' : 'bg-orange-50 dark:bg-orange-900/20']">
-                                    <div class="text-sm mb-1" :class="item.received_qty >= item.so_qty ? 'text-green-600 dark:text-green-400' : 'text-orange-600 dark:text-orange-400'">รับแล้ว</div>
+                                    <div class="text-sm mb-1" :class="item.received_qty >= item.so_qty ? 'text-green-600 dark:text-green-400' : 'text-orange-600 dark:text-orange-400'">จัดแล้ว</div>
                                     <div class="text-xl font-bold" :class="item.received_qty >= item.so_qty ? 'text-green-600 dark:text-green-400' : 'text-orange-600 dark:text-orange-400'">{{ item.received_qty }}</div>
                                 </div>
                                 <div class="bg-surface-100 dark:bg-surface-700 rounded p-3 text-center">
@@ -220,9 +220,9 @@ const combinedDetails = computed(() => {
 
                             <div class="mb-3">
                                 <div class="flex items-center justify-between mb-1.5">
-                                    <Tag v-if="item.received_qty >= item.so_qty" value="รับครบแล้ว" severity="success" icon="pi pi-check-circle" class="text-base" />
-                                    <Tag v-else-if="item.received_qty > 0" value="รับบางส่วน" severity="warn" icon="pi pi-clock" class="text-base" />
-                                    <Tag v-else value="ยังไม่รับ" severity="danger" icon="pi pi-times-circle" class="text-base" />
+                                    <Tag v-if="item.received_qty >= item.so_qty" value="จัดครบแล้ว" severity="success" icon="pi pi-check-circle" class="text-base" />
+                                    <Tag v-else-if="item.received_qty > 0" value="จัดบางส่วน" severity="warn" icon="pi pi-clock" class="text-base" />
+                                    <Tag v-else value="ยังไม่จัด" severity="danger" icon="pi pi-times-circle" class="text-base" />
                                     <span class="text-sm font-semibold">{{ item.so_qty > 0 ? ((item.received_qty / item.so_qty) * 100).toFixed(0) : 0 }}%</span>
                                 </div>
                                 <div class="h-2.5 bg-surface-100 dark:bg-surface-700 rounded-full overflow-hidden">

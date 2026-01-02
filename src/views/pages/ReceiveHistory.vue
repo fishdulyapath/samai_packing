@@ -1,9 +1,9 @@
 <script setup>
-import ReceiveDocService from '@/service/ReceiveDocService';
-import ReceiveDocTable from '@/components/ReceiveDocTable.vue';
-import ReceiveDetailDialog from '@/components/ReceiveDetailDialog.vue';
-import PrintPackingDialog from '@/components/PrintReceiptDialog.vue';
 import ImageGalleryDialog from '@/components/ImageGalleryDialog.vue';
+import PrintPackingialog from '@/components/PrintReceiptDialog.vue';
+import ReceiveDetailDialog from '@/components/ReceiveDetailDialog.vue';
+import ReceiveDocTable from '@/components/ReceiveDocTable.vue';
+import ReceiveDocService from '@/service/ReceiveDocService';
 import { useToast } from 'primevue/usetoast';
 import { onMounted, ref } from 'vue';
 
@@ -140,12 +140,12 @@ async function handlePrint(doc) {
             const totalSOQty = (result.details_so || []).reduce((sum, item) => sum + (parseInt(item.qty) || 0), 0);
             const totalReceiveQty = (result.details_receive || []).reduce((sum, item) => sum + (parseInt(item.qty) || 0), 0);
 
-            // เช็คว่าจำนวนที่รับเท่ากับ SO หรือไม่
+            // เช็คว่าจำนวนที่จัดเท่ากับ SO หรือไม่
             if (totalReceiveQty !== totalSOQty) {
                 toast.add({
                     severity: 'warn',
                     summary: 'ไม่สามารถพิมพ์ได้',
-                    detail: 'จำนวนที่รับต้องเท่ากับจำนวน PO เท่านั้น',
+                    detail: 'จำนวนที่จัดต้องเท่ากับจำนวน SO เท่านั้น',
                     life: 3000
                 });
                 return;
@@ -200,8 +200,8 @@ function handleImagesUpdated() {
 <template>
     <div class="flex flex-col gap-6">
         <div class="card">
-            <div class="font-semibold text-xl mb-2">ประวัติใบรับ</div>
-            <p class="text-muted-color m-0 mb-6">ดูประวัติใบรับสินค้าที่ปิดงานแล้ว</p>
+            <div class="font-semibold text-xl mb-2">ประวัติใบจัด</div>
+            <p class="text-muted-color m-0 mb-6">ดูประวัติใบจัดสินค้าที่ปิดงานแล้ว</p>
 
             <!-- Mobile Filters -->
             <div class="lg:hidden mb-4">
@@ -259,7 +259,7 @@ function handleImagesUpdated() {
             />
         </div>
 
-        <!-- Dialog รายละเอียดการรับ -->
+        <!-- Dialog รายละเอียดการจัด -->
         <ReceiveDetailDialog v-model:visible="detailDialog" :loading="detailLoading" :document="selectedDoc" :soDetails="soDetails" :receiveDetails="receiveDetails" @close="closeDetailDialog" />
 
         <!-- Print PackingDialog -->

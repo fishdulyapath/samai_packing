@@ -61,7 +61,7 @@ export default class PermissionService {
      * อัพเดทสิทธิ์ผู้ใช้
      * @param {Object} permissionData - ข้อมูลสิทธิ์
      * @param {string} permissionData.user - รหัสผู้ใช้
-     * @param {string} permissionData.receive_screen - สิทธิ์หน้ารับเอกสาร (0/1)
+     * @param {string} permissionData.receive_screen - สิทธิ์หน้าจัดเอกสาร (0/1)
      * @param {string} permissionData.admin_screen - สิทธิ์หน้าจัดการระบบ (0/1)
      * @param {string} permissionData.history_screen - สิทธิ์หน้าประวัติ (0/1)
      * @returns {Promise<Object>}

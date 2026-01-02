@@ -4,7 +4,7 @@ import AuthService from './AuthService';
 const API_URL = import.meta.env.VITE_SERVICE_API_URL;
 
 class ReceiveDocService {
-    // ดึงรายการใบรับสินค้า
+    // ดึงรายการใบจัดสินค้า
     async getReceiveDocList(search = '', fromdate = '', todate = '', page = 1, size = 20) {
         try {
             const provider = AuthService.getProviderName();
@@ -37,7 +37,7 @@ class ReceiveDocService {
         }
     }
 
-    // ดึงรายการใบรับสินค้าตาม status
+    // ดึงรายการใบจัดสินค้าตาม status
     async getReceiveDocListByStatus(search = '', fromdate = '', todate = '', status = 0, page = 1, size = 20) {
         try {
             const provider = AuthService.getProviderName();
@@ -91,10 +91,10 @@ class ReceiveDocService {
 
             return response.data;
         } catch (error) {
-            console.error('Error fetching PO doc list:', error);
+            console.error('Error fetching SO doc list:', error);
             return {
                 success: false,
-                message: error.response?.data?.message || 'Failed to fetch PO documents',
+                message: error.response?.data?.message || 'Failed to fetch SO documents',
                 data: [],
                 total: 0,
                 page: 1,
@@ -104,7 +104,7 @@ class ReceiveDocService {
         }
     }
 
-    // ส่งอนุมัติใบรับสินค้า
+    // ส่งอนุมัติใบจัดสินค้า
     async sendApprove(docno) {
         try {
             const provider = AuthService.getProviderName();
@@ -128,7 +128,7 @@ class ReceiveDocService {
         }
     }
 
-    // ปิดงานใบรับสินค้า
+    // ปิดงานใบจัดสินค้า
     async sendCloseJob(docno) {
         try {
             const provider = AuthService.getProviderName();
@@ -152,7 +152,7 @@ class ReceiveDocService {
         }
     }
 
-    // ลบใบรับสินค้า
+    // ลบใบจัดสินค้า
     async deleteReceiveDoc(docno) {
         try {
             const provider = AuthService.getProviderName();
@@ -176,7 +176,7 @@ class ReceiveDocService {
         }
     }
 
-    // สร้างใบรับสินค้า
+    // สร้างใบจัดสินค้า
     async createReceiveDoc(docData) {
         try {
             const provider = AuthService.getProviderName();
@@ -216,7 +216,7 @@ class ReceiveDocService {
         }
     }
 
-    // ดึงรายละเอียดใบรับสินค้า (SO items และ received items)
+    // ดึงรายละเอียดใบจัดสินค้า (SO items และ received items)
     async getReceiveDocDetail(docno) {
         try {
             const provider = AuthService.getProviderName();
@@ -242,7 +242,7 @@ class ReceiveDocService {
         }
     }
 
-    // ค้นหาสินค้า (รองรับการสแกน barcode)
+    // ค้นหาสินค้า (รองจัดการสแกน barcode)
     async getItemSearch(search) {
         try {
             const provider = AuthService.getProviderName();
@@ -291,7 +291,7 @@ class ReceiveDocService {
         }
     }
 
-    // บันทึกการรับสินค้า (delete -> insert)
+    // บันทึกการจัดสินค้า (delete -> insert)
     async updateReceiveDoc(docno, details) {
         try {
             const provider = AuthService.getProviderName();

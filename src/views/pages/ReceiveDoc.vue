@@ -1,8 +1,8 @@
 <script setup>
-import ReceiveDocService from '@/service/ReceiveDocService';
-import ReceiveDocTable from '@/components/ReceiveDocTable.vue';
+import PrintPackingialog from '@/components/PrintReceiptDialog.vue';
 import ReceiveDetailDialog from '@/components/ReceiveDetailDialog.vue';
-import PrintPackingDialog from '@/components/PrintReceiptDialog.vue';
+import ReceiveDocTable from '@/components/ReceiveDocTable.vue';
+import ReceiveDocService from '@/service/ReceiveDocService';
 import { useConfirm } from 'primevue/useconfirm';
 import { useToast } from 'primevue/usetoast';
 import { onMounted, ref } from 'vue';
@@ -131,7 +131,7 @@ async function loadSOList() {
             toast.add({
                 severity: 'error',
                 summary: 'Error',
-                detail: result.message || 'Failed to load PO documents',
+                detail: result.message || 'Failed to load SO documents',
                 life: 3000
             });
         }
@@ -139,7 +139,7 @@ async function loadSOList() {
         toast.add({
             severity: 'error',
             summary: 'Error',
-            detail: 'An error occurred while loading PO documents',
+            detail: 'An error occurred while loading SO documents',
             life: 3000
         });
     } finally {
@@ -168,7 +168,7 @@ async function createReceiveDoc() {
         toast.add({
             severity: 'warn',
             summary: 'Warning',
-            detail: 'กรุณาเลือก PO ก่อน',
+            detail: 'กรุณาเลือก SO ก่อน',
             life: 3000
         });
         return;
@@ -188,7 +188,7 @@ async function createReceiveDoc() {
             toast.add({
                 severity: 'success',
                 summary: 'Success',
-                detail: 'สร้างใบรับสินค้าสำเร็จ',
+                detail: 'สร้างใบจัดสินค้าสำเร็จ',
                 life: 3000
             });
 
@@ -239,7 +239,7 @@ function formatDate(dateStr) {
 
 async function confirmSendApprove(docData) {
     confirmDialog.require({
-        message: `ต้องการส่งอนุมัติใบรับสินค้า ${docData.doc_no} หรือไม่?`,
+        message: `ต้องการส่งอนุมัติใบจัดสินค้า ${docData.doc_no} หรือไม่?`,
         header: 'ยืนยันการส่งอนุมัติ',
         icon: 'pi pi-send',
         acceptLabel: 'ยืนยัน',
@@ -287,7 +287,7 @@ async function handleSendApprove(docData) {
 
 async function confirmDelete(docData) {
     confirmDialog.require({
-        message: `ต้องการลบใบรับสินค้า ${docData.doc_no} หรือไม่?`,
+        message: `ต้องการลบใบจัดสินค้า ${docData.doc_no} หรือไม่?`,
         header: 'ยืนยันการลบ',
         icon: 'pi pi-exclamation-triangle',
         acceptLabel: 'ลบ',
@@ -309,7 +309,7 @@ async function handleDelete(docData) {
             toast.add({
                 severity: 'success',
                 summary: 'Success',
-                detail: 'ลบใบรับสินค้าสำเร็จ',
+                detail: 'ลบใบจัดสินค้าสำเร็จ',
                 life: 3000
             });
             await loadReceiveDocs();
@@ -375,12 +375,12 @@ async function handlePrint(doc) {
             const totalSOQty = (result.details_so || []).reduce((sum, item) => sum + (parseInt(item.qty) || 0), 0);
             const totalReceiveQty = (result.details_receive || []).reduce((sum, item) => sum + (parseInt(item.qty) || 0), 0);
 
-            // เช็คว่าจำนวนที่รับเท่ากับ SO หรือไม่
+            // เช็คว่าจำนวนที่จัดเท่ากับ SO หรือไม่
             if (totalReceiveQty !== totalSOQty) {
                 toast.add({
                     severity: 'warn',
                     summary: 'ไม่สามารถพิมพ์ได้',
-                    detail: 'จำนวนที่รับต้องเท่ากับจำนวน PO เท่านั้น',
+                    detail: 'จำนวนที่จัดต้องเท่ากับจำนวน SO เท่านั้น',
                     life: 3000
                 });
                 return;
@@ -431,8 +431,8 @@ function closeDetailDialog() {
 <template>
     <div class="flex flex-col gap-6">
         <div class="card">
-            <div class="font-semibold text-xl mb-2">ใบรับสินค้า</div>
-            <p class="text-muted-color m-0 mb-6">จัดการใบรับสินค้าทั้งหมด</p>
+            <div class="font-semibold text-xl mb-2">ใบจัดสินค้า</div>
+            <p class="text-muted-color m-0 mb-6">จัดการใบจัดสินค้าทั้งหมด</p>
 
             <!-- Mobile Filters -->
             <div class="lg:hidden mb-4">
@@ -449,7 +449,7 @@ function closeDetailDialog() {
                         <Button label="ค้นหา" icon="pi pi-search" @click="handleSearch" :loading="loading" fluid />
                         <Button label="รีเฟรช" icon="pi pi-refresh" severity="secondary" @click="loadReceiveDocs" :loading="loading" fluid />
                     </div>
-                    <Button label="สร้างใบรับ" icon="pi pi-plus" @click="openCreateDialog" fluid severity="success" />
+                    <Button label="สร้างใบจัด" icon="pi pi-plus" @click="openCreateDialog" fluid severity="success" />
                 </div>
             </div>
 
@@ -471,7 +471,7 @@ function closeDetailDialog() {
                     <template #end>
                         <div class="flex gap-2">
                             <Button icon="pi pi-refresh" severity="secondary" text rounded v-tooltip.top="'รีเฟรช'" @click="loadReceiveDocs" :loading="loading" />
-                            <Button label="สร้างใบรับ" icon="pi pi-plus" @click="openCreateDialog" />
+                            <Button label="สร้างใบจัด" icon="pi pi-plus" @click="openCreateDialog" />
                         </div>
                     </template>
                 </Toolbar>
@@ -493,24 +493,24 @@ function closeDetailDialog() {
             />
         </div>
 
-        <!-- Dialog สร้างใบรับสินค้า -->
-        <Dialog v-model:visible="createDialog" :style="{ width: '95vw', maxWidth: '1200px' }" header="สร้างใบรับสินค้า" :modal="true" :draggable="false" position="top" class="create-dialog">
+        <!-- Dialog สร้างใบจัดสินค้า -->
+        <Dialog v-model:visible="createDialog" :style="{ width: '95vw', maxWidth: '1200px' }" header="สร้างใบจัดสินค้า" :modal="true" :draggable="false" position="top" class="create-dialog">
             <!-- Stepper -->
             <div class="mb-4">
                 <Stepper :value="currentStep" linear>
                     <StepList>
-                        <Step value="1">เลือก PO</Step>
+                        <Step value="1">เลือก SO</Step>
                         <Step value="2">กรอกรายละเอียด</Step>
                     </StepList>
                 </Stepper>
             </div>
 
             <div v-if="currentStep === '1'" class="step-content">
-                <!-- Step 1: เลือก PO -->
+                <!-- Step 1: เลือก SO -->
                 <div class="mb-4">
                     <!-- Mobile Search -->
                     <div class="md:hidden space-y-2 mb-3">
-                        <InputText v-model="soSearchQuery" placeholder="ค้นหา PO..." fluid @keyup.enter="handleSOSearch" />
+                        <InputText v-model="soSearchQuery" placeholder="ค้นหา SO..." fluid @keyup.enter="handleSOSearch" />
                         <div class="grid grid-cols-2 gap-2">
                             <DatePicker :showIcon="true" v-model="soFromDate" dateFormat="dd-mm-yy" placeholder="จากวันที่" fluid />
                             <DatePicker :showIcon="true" v-model="soToDate" dateFormat="dd-mm-yy" placeholder="ถึงวันที่" fluid />
@@ -520,7 +520,7 @@ function closeDetailDialog() {
 
                     <!-- Desktop Search -->
                     <div class="hidden md:flex flex-wrap items-center gap-2 mb-4">
-                        <InputText v-model="soSearchQuery" placeholder="ค้นหา PO..." style="width: 15rem" @keyup.enter="handleSOSearch" />
+                        <InputText v-model="soSearchQuery" placeholder="ค้นหา SO..." style="width: 15rem" @keyup.enter="handleSOSearch" />
                         <DatePicker :showIcon="true" v-model="soFromDate" dateFormat="dd-mm-yy" placeholder="จากวันที่" style="width: 12rem" />
                         <DatePicker :showIcon="true" v-model="soToDate" dateFormat="dd-mm-yy" placeholder="ถึงวันที่" style="width: 12rem" />
                         <Button label="ค้นหา" icon="pi pi-search" @click="handleSOSearch" :loading="soLoading" />
@@ -535,7 +535,7 @@ function closeDetailDialog() {
                     </div>
                     <div v-else-if="soList.length === 0" class="text-center py-8 text-muted-color">
                         <i class="pi pi-inbox text-4xl mb-2"></i>
-                        <p>ไม่พบข้อมูล PO</p>
+                        <p>ไม่พบข้อมูล SO</p>
                     </div>
                     <div v-else>
                         <div
@@ -592,10 +592,10 @@ function closeDetailDialog() {
                         scrollable
                         scrollHeight="400px"
                     >
-                        <template #empty> ไม่พบข้อมูล PO </template>
+                        <template #empty> ไม่พบข้อมูล SO </template>
                         <template #loading> กำลังโหลดข้อมูล... </template>
 
-                        <Column field="doc_no" header="เลขที่ PO" :sortable="true" style="min-width: 12rem">
+                        <Column field="doc_no" header="เลขที่ SO" :sortable="true" style="min-width: 12rem">
                             <template #body="{ data }">
                                 <span class="font-semibold text-primary">{{ data.doc_no }}</span>
                             </template>
@@ -629,7 +629,7 @@ function closeDetailDialog() {
                 <div class="flex flex-col gap-4">
                     <div class="bg-primary-50 dark:bg-primary-400/10 rounded-lg p-4">
                         <div class="flex items-center justify-between mb-3">
-                            <h6 class="font-semibold mb-0">PO ที่เลือก</h6>
+                            <h6 class="font-semibold mb-0">SO ที่เลือก</h6>
                             <Tag :value="selectedSO.doc_no" severity="info" />
                         </div>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -650,14 +650,14 @@ function closeDetailDialog() {
                                 <Tag :value="selectedSO.branch_code" severity="secondary" size="small" />
                             </div>
                             <div v-if="selectedSO.remark" class="md:col-span-2">
-                                <label class="text-xs text-muted-color block mb-1">หมายเหตุ PO</label>
+                                <label class="text-xs text-muted-color block mb-1">หมายเหตุ SO</label>
                                 <p class="text-sm">{{ selectedSO.remark }}</p>
                             </div>
                         </div>
                     </div>
 
                     <div class="flex flex-col gap-2">
-                        <label for="remark" class="font-semibold">หมายเหตุใบรับสินค้า</label>
+                        <label for="remark" class="font-semibold">หมายเหตุใบจัดสินค้า</label>
                         <Textarea id="remark" v-model="remark" rows="5" placeholder="กรอกหมายเหตุ..." fluid />
                     </div>
                 </div>
@@ -668,13 +668,13 @@ function closeDetailDialog() {
                     <Button v-if="currentStep === '1'" label="ยกเลิก" icon="pi pi-times" severity="secondary" outlined @click="hideCreateDialog" class="flex-1 md:flex-initial" />
                     <template v-else-if="currentStep === '2'">
                         <Button label="ย้อนกลับ" icon="pi pi-arrow-left" severity="secondary" outlined @click="backToSOList" class="flex-1 md:flex-initial" />
-                        <Button label="สร้างใบรับ" icon="pi pi-check" severity="success" @click="createReceiveDoc" :loading="loading" class="flex-1 md:flex-initial" />
+                        <Button label="สร้างใบจัด" icon="pi pi-check" severity="success" @click="createReceiveDoc" :loading="loading" class="flex-1 md:flex-initial" />
                     </template>
                 </div>
             </template>
         </Dialog>
 
-        <!-- Dialog รายละเอียดการรับ -->
+        <!-- Dialog รายละเอียดการจัด -->
         <ReceiveDetailDialog v-model:visible="detailDialog" :loading="detailLoading" :document="selectedDoc" :soDetails="soDetails" :receiveDetails="receiveDetails" @close="closeDetailDialog" />
 
         <!-- Print PackingDialog -->

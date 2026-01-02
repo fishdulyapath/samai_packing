@@ -1,8 +1,7 @@
 <script setup>
 import ReceiveDocService from '@/service/ReceiveDocService';
-import PrintPackingDialog from '@/components/PrintReceiptDialog.vue';
 import { useToast } from 'primevue/usetoast';
-import { computed, onMounted, ref, onUnmounted, nextTick } from 'vue';
+import { computed, nextTick, onMounted, onUnmounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
 const route = useRoute();
@@ -68,7 +67,7 @@ onMounted(async () => {
     await loadReceiveDocDetail();
 });
 
-// โหลดรายละเอียดใบรับสินค้า
+// โหลดรายละเอียดใบจัดสินค้า
 async function loadReceiveDocDetail() {
     loading.value = true;
     try {
@@ -78,7 +77,7 @@ async function loadReceiveDocDetail() {
             soDetails.value = result.details_so || [];
             receivedDetails.value = result.details_receive || [];
 
-            // ถ้ามีสินค้าที่รับแล้ว ให้โหลดมาแสดงใน scannedItems
+            // ถ้ามีสินค้าที่จัดแล้ว ให้โหลดมาแสดงใน scannedItems
             if (receivedDetails.value.length > 0) {
                 scannedItems.value = receivedDetails.value.map((item) => {
                     let barcode = item.barcode || item.item_code;
@@ -116,18 +115,18 @@ async function loadReceiveDocDetail() {
     }
 }
 
-// หาจำนวนสูงสุดที่รับได้สำหรับสินค้าแต่ละตัว
+// หาจำนวนสูงสุดที่จัดได้สำหรับสินค้าแต่ละตัว
 function getMaxQty(itemCode) {
     const soItem = soDetails.value.find((item) => item.item_code === itemCode);
     return soItem ? parseInt(soItem.qty) || 0 : 0;
 }
 
-// หาจำนวนที่รับไปแล้วจาก scannedItems
+// หาจำนวนที่จัดไปแล้วจาก scannedItems
 function getScannedQty(itemCode) {
     return scannedItems.value.filter((item) => item.item_code === itemCode).reduce((sum, item) => sum + item.qty, 0);
 }
 
-// คำนวณจำนวนคงเหลือที่ยังรับได้
+// คำนวณจำนวนคงเหลือที่ยังจัดได้
 function getRemainingQty(itemCode) {
     return getMaxQty(itemCode) - getScannedQty(itemCode);
 }
@@ -207,7 +206,7 @@ async function processBarcodeInput() {
                 toast.add({
                     severity: 'error',
                     summary: 'Error',
-                    detail: `สินค้า ${item.item_code} ไม่อยู่ใน PO นี้`,
+                    detail: `สินค้า ${item.item_code} ไม่อยู่ใน SO นี้`,
                     life: 3000
                 });
                 barcodeInput.value = '';
@@ -224,7 +223,7 @@ async function processBarcodeInput() {
                 toast.add({
                     severity: 'error',
                     summary: 'Error',
-                    detail: `สินค้า ${item.item_code} รับครบแล้ว (${maxQty} ${item.unit_code})`,
+                    detail: `สินค้า ${item.item_code} จัดครบแล้ว (${maxQty} ${item.unit_code})`,
                     life: 3000
                 });
                 barcodeInput.value = '';
@@ -239,7 +238,7 @@ async function processBarcodeInput() {
                 toast.add({
                     severity: 'warn',
                     summary: 'Warning',
-                    detail: `สามารถรับได้เพียง ${actualQty} ชิ้น (เหลือ ${remainingQty} ชิ้น)`,
+                    detail: `สามารถจัดได้เพียง ${actualQty} ชิ้น (เหลือ ${remainingQty} ชิ้น)`,
                     life: 3000
                 });
             }
@@ -348,7 +347,7 @@ function addItemToScanned(item, showToast = true) {
             toast.add({
                 severity: 'error',
                 summary: 'Error',
-                detail: `สินค้า ${item.item_code} ไม่อยู่ใน PO นี้`,
+                detail: `สินค้า ${item.item_code} ไม่อยู่ใน SO นี้`,
                 life: 3000
             });
         }
@@ -358,13 +357,13 @@ function addItemToScanned(item, showToast = true) {
     const maxQty = getMaxQty(item.item_code);
     const currentQty = getScannedQty(item.item_code);
 
-    // ตรวจสอบไม่ให้รับเกิน
+    // ตรวจสอบไม่ให้จัดเกิน
     if (currentQty >= maxQty) {
         if (showToast) {
             toast.add({
                 severity: 'error',
                 summary: 'Error',
-                detail: `สินค้า ${item.item_code} รับครบแล้ว (${maxQty} ${item.unit_code})`,
+                detail: `สินค้า ${item.item_code} จัดครบแล้ว (${maxQty} ${item.unit_code})`,
                 life: 3000
             });
         }
@@ -402,7 +401,7 @@ function addItemToScanned(item, showToast = true) {
                 toast.add({
                     severity: 'error',
                     summary: 'Error',
-                    detail: `ไม่สามารถรับเกิน ${maxQty} ${item.unit_code}`,
+                    detail: `ไม่สามารถจัดเกิน ${maxQty} ${item.unit_code}`,
                     life: 3000
                 });
             }
@@ -459,7 +458,7 @@ function updateQty(index, newQty) {
         toast.add({
             severity: 'error',
             summary: 'Error',
-            detail: `ไม่สามารถรับเกิน ${maxQty} ${item.unit_code}`,
+            detail: `ไม่สามารถจัดเกิน ${maxQty} ${item.unit_code}`,
             life: 3000
         });
         scannedItems.value[index].qty = maxQty - otherQty;
@@ -514,7 +513,7 @@ const progressPercentage = computed(() => {
     return (totalScannedQty.value / totalSOQty.value) * 100;
 });
 
-// บันทึกการรับสินค้า (จาก Summary Dialog)
+// บันทึกการจัดสินค้า (จาก Summary Dialog)
 async function saveReceiveDoc() {
     loading.value = true;
 
@@ -534,11 +533,11 @@ async function saveReceiveDoc() {
             toast.add({
                 severity: 'success',
                 summary: 'Success',
-                detail: 'บันทึกการรับสินค้าสำเร็จ',
+                detail: 'บันทึกการจัดสินค้าสำเร็จ',
                 life: 3000
             });
 
-            // เช็คว่าจำนวนที่รับเท่ากับ SO หรือไม่
+            // เช็คว่าจำนวนที่จัดเท่ากับ SO หรือไม่
             if (totalScannedQty.value === totalSOQty.value) {
                 // โหลดข้อมูล document อีกครั้งเพื่อเตรียมพิมพ์
                 await loadDocumentDataForPrint();
@@ -632,7 +631,7 @@ onUnmounted(() => {
                     </div>
                 </div>
                 <div class="flex items-center gap-1 md:gap-2">
-                    <Button icon="pi pi-list" text rounded @click="showSODetails = true" v-badge.danger="soDetails.length" v-tooltip.bottom="'ดูรายการ PO'" size="small" class="md:size-default" />
+                    <Button icon="pi pi-list" text rounded @click="showSODetails = true" v-badge.danger="soDetails.length" v-tooltip.bottom="'ดูรายการ SO'" size="small" class="md:size-default" />
                     <!-- Mobile: Icon only -->
                     <Button v-if="isMobile" label="บันทึก" icon="pi pi-check" severity="success" @click="showSummary" size="small" />
                     <!-- Desktop: With label -->
@@ -711,7 +710,7 @@ onUnmounted(() => {
             <!-- Scanned Items List -->
             <div v-if="scannedItems.length === 0" class="text-center py-12 text-muted-color">
                 <i class="pi pi-qrcode text-5xl mb-3 opacity-30"></i>
-                <p class="text-sm">สแกน Barcode เพื่อเริ่มรับสินค้า</p>
+                <p class="text-sm">สแกน Barcode เพื่อเริ่มจัดสินค้า</p>
             </div>
 
             <div v-else class="space-y-2">
@@ -764,7 +763,7 @@ onUnmounted(() => {
         <!-- SO Details Dialog - Full Screen on Mobile, Compact on Desktop -->
         <Dialog
             v-model:visible="showSODetails"
-            header="รายการใน PO"
+            header="รายการใน SO"
             :style="isMobile ? { width: '100vw', height: '100vh', maxWidth: '100%' } : { width: '90vw', maxWidth: '1200px' }"
             :modal="true"
             :dismissableMask="true"
@@ -792,11 +791,11 @@ onUnmounted(() => {
                     </div>
                 </div>
                 <div class="bg-success-100 dark:bg-success-900/30 rounded-lg p-2 lg:p-4 text-center">
-                    <div class="text-[10px] lg:text-sm text-success-600 dark:text-success-400 mb-1">ยอดรว PO</div>
+                    <div class="text-[10px] lg:text-sm text-success-600 dark:text-success-400 mb-1">ยอดรว SO</div>
                     <div class="text-lg lg:text-3xl font-bold text-success">{{ totalSOQty }}</div>
                 </div>
                 <div class="bg-orange-100 dark:bg-orange-900/30 rounded-lg p-2 lg:p-4 text-center">
-                    <div class="text-[10px] lg:text-sm text-orange-600 dark:text-orange-400 mb-1">รับแล้ว</div>
+                    <div class="text-[10px] lg:text-sm text-orange-600 dark:text-orange-400 mb-1">จัดแล้ว</div>
                     <div class="text-lg lg:text-3xl font-bold text-orange-600 dark:text-orange-400">
                         {{ totalScannedQty }}
                     </div>
@@ -822,14 +821,14 @@ onUnmounted(() => {
                         <!-- Quantity Stats (Center) - Inline -->
                         <div class="flex items-center gap-4">
                             <div class="text-center">
-                                <div class="text-xs text-blue-600 dark:text-blue-400 mb-1">จำนวน PO</div>
+                                <div class="text-xs text-blue-600 dark:text-blue-400 mb-1">จำนวน SO</div>
                                 <div class="text-xl font-bold text-blue-600 dark:text-blue-400">
                                     {{ so.qty }}
                                 </div>
                             </div>
                             <div class="text-muted-color">→</div>
                             <div class="text-center">
-                                <div class="text-xs mb-1" :class="getScannedQty(so.item_code) >= parseInt(so.qty) ? 'text-green-600 dark:text-green-400' : 'text-orange-600 dark:text-orange-400'">รับแล้ว</div>
+                                <div class="text-xs mb-1" :class="getScannedQty(so.item_code) >= parseInt(so.qty) ? 'text-green-600 dark:text-green-400' : 'text-orange-600 dark:text-orange-400'">จัดแล้ว</div>
                                 <div class="text-xl font-bold" :class="getScannedQty(so.item_code) >= parseInt(so.qty) ? 'text-green-600 dark:text-green-400' : 'text-orange-600 dark:text-orange-400'">
                                     {{ getScannedQty(so.item_code) }}
                                 </div>
@@ -846,7 +845,7 @@ onUnmounted(() => {
                             <div class="w-32">
                                 <Tag v-if="getScannedQty(so.item_code) >= parseInt(so.qty)" value="ครบ" severity="success" icon="pi pi-check-circle" class="text-xs" />
                                 <Tag v-else-if="getScannedQty(so.item_code) > 0" value="บางส่วน" severity="warn" icon="pi pi-clock" class="text-xs" />
-                                <Tag v-else value="ยังไม่รับ" severity="danger" icon="pi pi-times-circle" class="text-xs" />
+                                <Tag v-else value="ยังไม่จัด" severity="danger" icon="pi pi-times-circle" class="text-xs" />
                                 <div class="text-xs text-center mt-1 font-semibold">{{ ((getScannedQty(so.item_code) / parseInt(so.qty)) * 100).toFixed(0) }}%</div>
                             </div>
                         </div>
@@ -870,13 +869,13 @@ onUnmounted(() => {
                         <!-- Quantity Stats -->
                         <div class="grid grid-cols-3 gap-2">
                             <div class="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-2 text-center">
-                                <div class="text-[10px] text-blue-600 dark:text-blue-400 mb-1">จำนวน PO</div>
+                                <div class="text-[10px] text-blue-600 dark:text-blue-400 mb-1">จำนวน SO</div>
                                 <div class="text-base font-bold text-blue-600 dark:text-blue-400">
                                     {{ so.qty }}
                                 </div>
                             </div>
                             <div :class="['rounded-lg p-2 text-center', getScannedQty(so.item_code) >= parseInt(so.qty) ? 'bg-green-50 dark:bg-green-900/20' : 'bg-orange-50 dark:bg-orange-900/20']">
-                                <div class="text-[10px] mb-1" :class="getScannedQty(so.item_code) >= parseInt(so.qty) ? 'text-green-600 dark:text-green-400' : 'text-orange-600 dark:text-orange-400'">รับแล้ว</div>
+                                <div class="text-[10px] mb-1" :class="getScannedQty(so.item_code) >= parseInt(so.qty) ? 'text-green-600 dark:text-green-400' : 'text-orange-600 dark:text-orange-400'">จัดแล้ว</div>
                                 <div class="text-base font-bold" :class="getScannedQty(so.item_code) >= parseInt(so.qty) ? 'text-green-600 dark:text-green-400' : 'text-orange-600 dark:text-orange-400'">
                                     {{ getScannedQty(so.item_code) }}
                                 </div>
@@ -890,9 +889,9 @@ onUnmounted(() => {
                         <!-- Progress Bar -->
                         <div class="mt-3">
                             <div class="flex items-center justify-between mb-1">
-                                <Tag v-if="getScannedQty(so.item_code) >= parseInt(so.qty)" value="รับครบแล้ว" severity="success" icon="pi pi-check-circle" />
-                                <Tag v-else-if="getScannedQty(so.item_code) > 0" value="รับบางส่วน" severity="warn" icon="pi pi-clock" />
-                                <Tag v-else value="ยังไม่รับ" severity="danger" icon="pi pi-times-circle" />
+                                <Tag v-if="getScannedQty(so.item_code) >= parseInt(so.qty)" value="จัดครบแล้ว" severity="success" icon="pi pi-check-circle" />
+                                <Tag v-else-if="getScannedQty(so.item_code) > 0" value="จัดบางส่วน" severity="warn" icon="pi pi-clock" />
+                                <Tag v-else value="ยังไม่จัด" severity="danger" icon="pi pi-times-circle" />
                                 <span class="text-xs font-semibold">{{ ((getScannedQty(so.item_code) / parseInt(so.qty)) * 100).toFixed(0) }}%</span>
                             </div>
                             <ProgressBar :value="(getScannedQty(so.item_code) / parseInt(so.qty)) * 100" :showValue="false" class="h-2" />
