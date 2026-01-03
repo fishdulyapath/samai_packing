@@ -3,7 +3,7 @@ Sakai is an application template for Vue based on the [create-vue](https://githu
 Visit the [documentation](https://sakai.primevue.org/documentation) to get started.
 
 
-CREATE TABLE public.krc_permission
+CREATE TABLE public.krp_permission
 (
   roworder serial,
   user_code character varying(255) NOT NULL,
@@ -11,10 +11,10 @@ CREATE TABLE public.krc_permission
   admin_screen smallint NOT NULL DEFAULT 0,
   history_screen smallint NOT NULL DEFAULT 0,
   create_datetime timestamp without time zone DEFAULT timezone('asia/bangkok'::text, now()),
-  CONSTRAINT krc_permission_pkey PRIMARY KEY (user_code)
+  CONSTRAINT krp_permission_pkey PRIMARY KEY (user_code)
 );
 
-CREATE TABLE public.krc_trans
+CREATE TABLE public.krp_trans
 (
   roworder serial,
   doc_no character varying(255) NOT NULL,
@@ -36,21 +36,21 @@ CREATE TABLE public.krc_trans
   close_date_time timestamp without time zone DEFAULT timezone('Asia/Bangkok'::text, now()),
   cust_code character varying(255),
   sale_code character varying(255),
-  CONSTRAINT krc_trans_pk PRIMARY KEY (doc_no)
+  CONSTRAINT krp_trans_pk PRIMARY KEY (doc_no)
 );
 
 
-CREATE INDEX krc_trans_idx
-  ON public.krc_trans
+CREATE INDEX krp_trans_idx
+  ON public.krp_trans
   USING btree
   (doc_no COLLATE pg_catalog."default");
 
-CREATE INDEX idx_krc_trans_doc_ref
-  ON public.krc_trans
+CREATE INDEX idx_krp_trans_doc_ref
+  ON public.krp_trans
   USING btree
   (doc_ref COLLATE pg_catalog."default");
 
-  CREATE TABLE public.krc_trans_detail
+  CREATE TABLE public.krp_trans_detail
 (
   roworder serial,
   doc_no character varying(255),
@@ -65,5 +65,5 @@ CREATE INDEX idx_krc_trans_doc_ref
   create_datetime timestamp without time zone DEFAULT timezone('Asia/Bangkok'::text, now()),
   remark text,
   line_number integer NOT NULL DEFAULT 0,
-  CONSTRAINT krc_trans_detail_pk PRIMARY KEY (roworder)
+  CONSTRAINT krp_trans_detail_pk PRIMARY KEY (roworder)
 );
