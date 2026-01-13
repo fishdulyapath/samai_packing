@@ -183,7 +183,7 @@ class ReceiveDocService {
             const dbname = AuthService.getDatabaseName();
             const user = AuthService.getUser();
 
-            // Generate doc_no: RCDYYYYMMDDHIS-random 4 digits
+            // Generate doc_no: RPDYYYYMMDDHIS-random 4 digits
             const now = new Date();
             const year = now.getFullYear();
             const month = String(now.getMonth() + 1).padStart(2, '0');
@@ -192,7 +192,7 @@ class ReceiveDocService {
             const minutes = String(now.getMinutes()).padStart(2, '0');
             const seconds = String(now.getSeconds()).padStart(2, '0');
             const random = String(Math.floor(Math.random() * 10000)).padStart(4, '0');
-            const doc_no = `RCD${year}${month}${day}${hours}${minutes}${seconds}-${random}`;
+            const doc_no = `RPD${year}${month}${day}${hours}${minutes}${seconds}-${random}`;
 
             const body = {
                 doc_no: doc_no,
